@@ -108,7 +108,7 @@ router.get("/check/:token", async (req, res) => {
       if (user[0].token == token) {
         res.send({
           response: true,
-          user
+          data: user
         });
       } else {
         res.send({

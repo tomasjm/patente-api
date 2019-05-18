@@ -41,8 +41,10 @@ router.post("/login", async (req, res) => {
           .where("user", user);
         res.send({
           response: true,
-          id: cuenta[0].id,
-          token
+          data: {
+            id: cuenta[0].id,
+            token
+          }
         });
       } else {
         res.send({

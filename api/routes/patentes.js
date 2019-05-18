@@ -9,7 +9,7 @@ router.get("/", require("../middlewares/checksession"), async (req, res) => {
   const patentes = await Patente.query().where("usuario_id", userid);
   return res.send({
     response: false,
-    patentes
+    data: patentes
   });
 });
 router.get("/:patente", async (req, res) => {
@@ -25,7 +25,7 @@ router.get("/:patente", async (req, res) => {
     .where("patente", patente);
   res.send({
     response: true,
-    userinfo
+    data: userinfo
   });
 });
 router.delete(

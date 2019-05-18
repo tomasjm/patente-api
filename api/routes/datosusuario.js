@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     });
     res.send({
       response: true,
-      newDatosUsuario
+      data: newDatosUsuario
     });
   } else {
     const newDatosUsuario = await Datosusuario.query()
@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
       .where("usuario_id", userid);
     res.send({
       response: true,
-      newDatosUsuario
+      data: newDatosUsuario
     });
   }
 });

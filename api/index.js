@@ -45,6 +45,6 @@ app.use("/patentes", require("./routes/patentes"));
 // app.use('/tipo', require("./routes/tipo"));
 // app.use('/landing', require("./routes/landing"));
 
-app.listen(3000, function() {
-  console.log("Servidor montado en puerto: 3000!");
+app.listen(3002, function() {
+  console.log("Servidor montado en puerto: 3002!");
 });

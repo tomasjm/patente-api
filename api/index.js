@@ -41,6 +41,7 @@ app.use(
   require("./routes/datosusuario")
 );
 app.use("/patentes", require("./routes/patentes"));
+app.use("/notifications", require("./routes/notificaciones"));
 // app.use('/eventos', require("./middlewares/userchecker"), require("./routes/eventos"));
 // app.use('/tipo', require("./routes/tipo"));
 // app.use('/landing', require("./routes/landing"));

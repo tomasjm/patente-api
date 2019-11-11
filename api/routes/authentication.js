@@ -43,6 +43,7 @@ router.post("/login", async (req, res) => {
           response: true,
           data: {
             id: cuenta[0].id,
+            tipo_usuario_id: cuenta[0].tipo_usuario_id,
             token
           }
         });

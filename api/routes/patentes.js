@@ -4,6 +4,14 @@ const router = express.Router();
 const Patente = require("../models/Patente");
 const Datosusuario = require("../models/Datosusuario");
 
+
+/**
+ * OBTENER PATENTES DEL USUARIO QUE ENVIÓ EL TOKEN DE AUTORIZACION
+ * [get]
+ * 
+ * 
+ * 
+ */
 router.get("/", require("../middlewares/checksession"), async (req, res) => {
   const userid = req.userid;
   const patentes = await Patente.query().where("usuario_id", userid);
@@ -12,9 +20,16 @@ router.get("/", require("../middlewares/checksession"), async (req, res) => {
     data: patentes
   });
 });
+/**
+ * PEDIR INFORMACION DE USUARIO SEGUN PATENTE
+ * [GET]
+ * 
+ * PARAM: /:PATENTE
+ * 
+ */
 router.get("/:patente", async (req, res) => {
   const patente = req.params.patente;
-  const userinfo = await Patente.query()
+  const userPatenteInfo = await Patente.query()
     .select("*")
     .leftJoin(
       "datos_usuario",
@@ -25,9 +40,16 @@ router.get("/:patente", async (req, res) => {
     .where("patente", patente);
   res.send({
     response: true,
-    data: userinfo
+    data: userPatenteInfo
   });
 });
+/**
+ * BORRAR PATENTES, REQUIERE AUTORIZACION POR TOKEN
+ * [DELETE]
+ * 
+ * PARAM: /:id_patente 
+ * 
+ */
 router.delete(
   "/:id_patente",
   require("../middlewares/checksession"),
@@ -42,15 +64,29 @@ router.delete(
     });
   }
 );
+/**
+ * CREAR PATENTES
+ * BODY: 
+ * {
+ *  "patente": patente,
+ *  "desc": descripcion
+ * }
+ */
 router.post("/", require("../middlewares/checksession"), async (req, res) => {
   const userid = req.userid;
   const { patente, desc } = req.body;
-  const newPatente = await Patente.query().insert({
-    patente,
+  let formattedPatente = patente.toUpperCase();
+  let regExp = new RegExp("^[A-Z0-9]{4}-[A-Z0-9]{4}");
+  let patenteIsValid = regExp.test(formattedPatente);
+  if (!patenteIsValid) return res.send({ response: false, error: "Patente no es valida, formato AAAA-BBBB" });
+  let patenteExists = await Patente.query().select("*").where({ patente: formattedPatente });
+  if (patenteExists.length > 0) return res.send({ response: false, error: "Ya está registrada esta patente" })
+  await Patente.query().insert({
+    patente: formattedPatente,
     desc,
     usuario_id: userid
   });
-  res.send({
+  return res.send({
     response: true
   });
 });

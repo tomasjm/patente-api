@@ -1,0 +1,9 @@
+{
+    "notifications": [
+        {
+            "tipo": "OPEN_CAR",
+            "titulo": "Auto abierto!",
+            "mensaje": "Tu auto tiene puertas abiertas"
+        }
+    ]
+}

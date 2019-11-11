@@ -23,6 +23,7 @@ exports.seed = function (knex, Promise) {
           user: "admin",
           password: cryptPassword("password"),
           token: null,
+          firebase_token: null,
           tipo_usuario_id: 1
         },
         {
@@ -30,6 +31,7 @@ exports.seed = function (knex, Promise) {
           user: "guardia",
           password: cryptPassword("password"),
           token: null,
+          firebase_token: null,
           tipo_usuario_id: 2
         },
         {
@@ -37,6 +39,7 @@ exports.seed = function (knex, Promise) {
           user: "usuario",
           password: cryptPassword("password"),
           token: null,
+          firebase_token: 'fwucdRDGLAA:APA91bGbXMUH6-iFaCtS7tBsT3u_n3Rt0cNgXh0XlYOBMeApUasO0cGLR7JQGkBsatwlfNSiMp-x3dzvw6Vyum4eBGIEjSUw3KiyXnXI46bQy9frGiBH4c8xMPaE6S4AcfHtxHWMEJUR',
           tipo_usuario_id: 3
         }
       ]);

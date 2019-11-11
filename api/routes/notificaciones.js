@@ -26,12 +26,20 @@ router.get("/savetoken/:firebase_token", require('../middlewares/checksession'),
     });
 });
 
+router.get("/types", (req, res) => {
+    return res.send({
+        response: true,
+        data: notificationsJson
+    });
+})
+
 router.post("/send/:notification_type", async (req, res) => {
     const { notification_type } = req.params;
     const { patente } = req.body;
     if (patente == null) return res.send({ response: false });
     const patenteInfo = await Patente.query().where("patente", patente);
-    const user = await Usuario.query().where("id", "patenteInfo[0].user_id");
+    const user = await Usuario.query().where("id", patenteInfo[0].user_id);
+    if (user[0].token == null || user[0].token == '') return res.send({ response: false, error: "El usuario no tiene una sesión activa" });
     const notification_key = user[0].firebase_token;
     if (notification_key == null && notification_key == '') return res.send({ response: false, error: "no tiene key" });
 

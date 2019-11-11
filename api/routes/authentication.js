@@ -125,6 +125,13 @@ router.get("/check/:token", async (req, res) => {
     }
   });
 });
+
+router.get("/logout/:token", async (req, res) => {
+  const { token } = req.params;
+  let user = await Usuario.query().patch({ token: null }).where("token", token);
+  if (user == 1) return res.send({ response: true });
+  else return res.send({ response: false });
+});
 // router.post("/renew", async (req, res) => {
 //   const { token } = req.body;
 //   jwt.verify(token, config.JWTKEY, async (err, payload) => {

@@ -1,9 +1,15 @@
 {
     "notifications": [
         {
+            "tipo": "CUSTOM",
+            "titulo": "Alerta",
+            "mensaje": "Te han enviado una alerta!",
+            "icono": ""
+        },
+        {
             "tipo": "AUTO_ABIERTO",
             "titulo": "Auto abierto",
-            "mensaje": "Tu auto tiene puertas abiertas",
+            "mensaje": "Tu auto tiene puertas abiertas!",
             "icono": "lock_open"
         },
         {
@@ -23,12 +29,6 @@
             "titulo": "Auto chocado",
             "mensaje": "Tu auto ha sido chocado!",
             "icono": "local_car_wash"
-        },
-        {
-            "tipo": "CUSTOM",
-            "titulo": "",
-            "mensaje": "",
-            "icono": ""
         }
     ]
 }

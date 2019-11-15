@@ -1,9 +1,34 @@
 {
     "notifications": [
         {
-            "tipo": "OPEN_CAR",
-            "titulo": "Auto abierto!",
-            "mensaje": "Tu auto tiene puertas abiertas"
+            "tipo": "AUTO_ABIERTO",
+            "titulo": "Auto abierto",
+            "mensaje": "Tu auto tiene puertas abiertas",
+            "icono": "lock_open"
+        },
+        {
+            "tipo": "AUTO_ALARMA",
+            "titulo": "Alarma sonando",
+            "mensaje": "La alarma de tu auto está sonando!",
+            "icono": "laptop_windows"
+        },
+        {
+            "tipo": "AUTO_ROBO",
+            "titulo": "Intento robo",
+            "mensaje": "Están intentando robar tu auto!",
+            "icono": "person_pin"
+        },
+        {
+            "tipo": "AUTO_CHOCADO",
+            "titulo": "Auto chocado",
+            "mensaje": "Tu auto ha sido chocado!",
+            "icono": "local_car_wash"
+        },
+        {
+            "tipo": "CUSTOM",
+            "titulo": "",
+            "mensaje": "",
+            "icono": ""
         }
     ]
 }

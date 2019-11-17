@@ -95,6 +95,7 @@ router.post("/register", async (req, res) => {
 
 router.get("/check/:token", async (req, res) => {
   const token = req.params.token;
+  if (token == null) return res.send({ response: false, message: "No hay token" });
   jwt.verify(token, config.JWTKEY, async (err, payload) => {
     if (payload) {
       const id_cuenta = payload.id;

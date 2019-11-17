@@ -106,6 +106,11 @@ router.get("/check/:token", async (req, res) => {
           "usuario.id",
           "=",
           "datos_usuario.usuario_id"
+        ).leftJoin(
+          "institucion",
+          "usuario.institucion_id",
+          "=",
+          "institucion.id"
         )
         .where("usuario.id", id_cuenta);
       if (user[0].token == token) {

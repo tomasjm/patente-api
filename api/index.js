@@ -7,7 +7,7 @@ const chalk = require("chalk");
 const { Model } = require("objection");
 const knex = require("./database");
 
-const morganMiddleware = morgan(function(tokens, req, res) {
+const morganMiddleware = morgan(function (tokens, req, res) {
   return [
     chalk.green.bold("[" + tokens.method(req, res) + "]"),
     chalk.red.bold(tokens.status(req, res)),
@@ -22,11 +22,11 @@ app.use(morganMiddleware);
 
 Model.knex(knex);
 
-knex.raw("select 1+1 as result").then(function() {
+knex.raw("select 1+1 as result").then(function () {
   console.log("Conexión a base de datos establecida.");
 });
 
-app.get("/", async function(req, res) {
+app.get("/", async function (req, res) {
   res.send({
     response: true
   });
@@ -42,10 +42,11 @@ app.use(
 );
 app.use("/patentes", require("./routes/patentes"));
 app.use("/notifications", require("./routes/notificaciones"));
+app.use("/instituciones", require("./routes/institucion"));
 // app.use('/eventos', require("./middlewares/userchecker"), require("./routes/eventos"));
 // app.use('/tipo', require("./routes/tipo"));
 // app.use('/landing', require("./routes/landing"));
 
-app.listen(3002, function() {
+app.listen(3002, function () {
   console.log("Servidor montado en puerto: 3002!");
 });

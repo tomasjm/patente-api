@@ -1,4 +1,4 @@
-exports.up = function async(knex, Promise) {
+exports.up = async (knex, Promise) => {
   await knex.schema
     .createTable("tipo_usuario", function (table) {
       table.increments("id").primary();

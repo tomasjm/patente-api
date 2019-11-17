@@ -63,7 +63,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  var { user, password } = req.body;
+  var { user, password, institucion_id } = req.body;
   user = user.toLowerCase();
   const userAccount = await Usuario.query().where("user", user);
   if (userAccount.length > 0) {
@@ -72,11 +72,12 @@ router.post("/register", async (req, res) => {
       message: "Este usuario ya se encuentra registrado"
     });
   } else {
-    const newAccount = Usuario.query()
+    Usuario.query()
       .insert({
         user,
         password: cryptPassword(password),
-        tipo_usuario_id: 2
+        tipo_usuario_id: 3,
+        institucion_id
       })
       .then(() => {
         res.send({

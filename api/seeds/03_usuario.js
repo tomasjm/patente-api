@@ -24,7 +24,8 @@ exports.seed = function (knex, Promise) {
           password: cryptPassword("password"),
           token: null,
           firebase_token: null,
-          tipo_usuario_id: 1
+          tipo_usuario_id: 1,
+          institucion_id: 1
         },
         {
           id: 2,
@@ -32,7 +33,8 @@ exports.seed = function (knex, Promise) {
           password: cryptPassword("password"),
           token: null,
           firebase_token: null,
-          tipo_usuario_id: 2
+          tipo_usuario_id: 2,
+          institucion_id: 1
         },
         {
           id: 3,
@@ -40,7 +42,8 @@ exports.seed = function (knex, Promise) {
           password: cryptPassword("password"),
           token: null,
           firebase_token: 'e1RT3FLNa6Q:APA91bGH7RA-I_O_psUf5Ggno2FVEv0Z2-kaRrPr6h6YABHcKhi1c0aUwRESdRdgLymk-boaSrygjlMs4eroEkp4IVvogCd7FKiCF5kFPcnTxtt9-stCZ6PU1MkGbyq4xcj7O_yy0v83',
-          tipo_usuario_id: 3
+          tipo_usuario_id: 3,
+          institucion_id: 1
         }
       ]);
     });

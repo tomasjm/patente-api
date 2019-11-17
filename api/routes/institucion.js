@@ -16,8 +16,8 @@ router.post("/:institucion", require("../middlewares/checksession"), async (req,
     if (user, length == 0 || user[0].tipo_usuario_id != 1) return res.send({ response: false, message: "no tienes permiso" });
     const institucionExistente = await Institucion.query().where("institucion", institucion);
     if (institucionExistente.length != 0) return res.send({ response: false, message: "Ya está registrada esta institución" });
-    let institucion = await Institucion.insert({ institucion });
-    if (institucion) return res.send({ response: true });
+    let institucionResp = await Institucion.insert({ institucion });
+    if (institucionResp) return res.send({ response: true });
 
     return res.send({
         response: false,

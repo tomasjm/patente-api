@@ -47,7 +47,7 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
     const notification_key = user[0].firebase_token;
     if (notification_key == null && notification_key == '') return res.send({ response: false, error: "no tiene key" });
     await Alerta.query().insert({
-        tipo: item.tipo,
+        tipo: "OPEN_CAR",
         desde_usuario_id: userid,
         hacia_usuario_id: user[0].id,
         patente_id: patenteInfo[0].id,

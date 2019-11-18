@@ -53,7 +53,7 @@ exports.up = async (knex, Promise) => {
     table.increments("id").primary();
     table.string("tipo");
     table.boolean("confirmado").defaultTo(false);
-    table.timestamp("fecha");
+    table.integer("fecha");
     table
       .integer("desde_usuario_id")
       .unsigned()

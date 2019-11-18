@@ -95,6 +95,24 @@ router.get("/usuarios/listar/institucion/:institucion_id", async (req, res) => {
         data: usuarios
     });
 });
+router.get("/usuarios/habilitar/:id_usuario", async (req, res) => {
+    let { id_usuario } = req.params;
+    await Usuario.query().patch({
+        disponible: true
+    }).where("id", id_usuario);
+    return res.send({
+        response: true
+    });
+});
+router.get("/usuarios/deshabilitar/:id_usuario", async (req, res) => {
+    let { id_usuario } = req.params;
+    await Usuario.query().patch({
+        disponible: true
+    }).where("id", id_usuario);
+    return res.send({
+        response: true
+    });
+});
 router.get("/usuarios/bloquear/:id_usuario", async (req, res) => {
     let { id_usuario } = req.params;
     await Usuario.query().patch({

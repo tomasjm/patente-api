@@ -17,6 +17,7 @@ exports.up = async (knex, Promise) => {
       table.string("token").defaultTo('');
       table.string("firebase_token").defaultTo('');
       table.boolean("blocked").defaultTo(false);
+      table.boolean("disponible").defaultTo(true);
       table
         .integer("institucion_id")
         .unsigned()
@@ -34,7 +35,36 @@ exports.up = async (knex, Promise) => {
         .references("id")
         .inTable("tipo_usuario");
     });
-
+  await knex.schema.createTable("alerta", function (table) {
+    table.increments("id").primary();
+    table.string("tipo");
+    table.boolean("confirmado").defaultTo(false);
+    table.timestamp("fecha");
+    table
+      .integer("desde_usuario_id")
+      .unsigned()
+      .notNullable();
+    table
+      .foreign("desde_usuario_id")
+      .references("id")
+      .inTable("usuario");
+    table
+      .integer("patente_id")
+      .unsigned()
+      .notNullable();
+    table
+      .foreign("patente_id")
+      .references("id")
+      .inTable("patente");
+    table
+      .integer("hacia_usuario_id")
+      .unsigned()
+      .notNullable();
+    table
+      .foreign("hacia_usuario_id")
+      .references("id")
+      .inTable("usuario");
+  });
   await knex.schema
     .createTable("datos_usuario", function (table) {
       table.increments("id").primary();
@@ -146,7 +176,9 @@ exports.down = function (knex, Promise) {
       return knex.schema.dropTable("usuario").then(() => {
         return knex.schema.dropTable("tipo_usuario").then(() => {
           return knex.schema.dropTable("institucion").then(() => {
+            return knex.schema.dropTable("alerta").then(() => {
 
+            });
           });
         });
       });

@@ -4,6 +4,9 @@ const router = express.Router();
 
 const Usuario = require("../models/Usuario");
 const Patente = require("../models/Patente");
+const Alerta = require("../models/Alerta");
+
+const moment = require("moment");
 
 var notificationsJson = require("../notifications.json");
 var notificationsType = notificationsJson['notifications'];
@@ -32,9 +35,10 @@ router.get("/types", (req, res) => {
     });
 })
 
-router.post("/send/:notification_type", async (req, res) => {
+router.post("/send/:notification_type", require("../middlewares/checksession"), async (req, res) => {
     const { notification_type } = req.params;
     const { patente } = req.body;
+    const userid = req.userid;
     if (patente == null) return res.send({ response: false });
     const patenteInfo = await Patente.query().where("patente", patente);
     if (patenteInfo.length == 0) return res.send({ response: false, error: "Patente no registrada" });
@@ -53,7 +57,14 @@ router.post("/send/:notification_type", async (req, res) => {
                 token: notification_key
             };
             admin.messaging().send(message)
-                .then((response) => {
+                .then(async (response) => {
+                    await Alerta.query().insert({
+                        tipo: item.tipo,
+                        desde_usuario_id: userid,
+                        hacia_usuario_id: user[0].id,
+                        patente_id: patenteInfo[0].id,
+                        fecha: moment().unix()
+                    });
                     return res.send({
                         response: true
                     });

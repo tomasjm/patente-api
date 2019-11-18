@@ -69,7 +69,7 @@ router.get("/usuarios/listar", async (req, res) => {
         data: usuarios
     });
 });
-router.get("/usuarios/listar/:tipo_usuario_id", async (req, res) => {
+router.get("/usuarios/listar/tipo/:tipo_usuario_id", async (req, res) => {
     let { tipo_usuario_id } = req.params;
     let usuarios = await Usuario.query().where("tipo_usuario_id", tipo_usuario_id);
     return res.send({
@@ -77,6 +77,15 @@ router.get("/usuarios/listar/:tipo_usuario_id", async (req, res) => {
         data: usuarios
     });
 });
+router.get("/usuarios/listar/institucion/:institucion_id", async (req, res) => {
+    let { institucion_id } = req.params;
+    let usuarios = await Usuario.query().where("institucion_id", institucion_id);
+    return res.send({
+        response: true,
+        data: usuarios
+    });
+});
+
 router.get("/usuarios/bloquear/:id_usuario", async (req, res) => {
     let { id_usuario } = req.params;
     await Usuario.query().patch({

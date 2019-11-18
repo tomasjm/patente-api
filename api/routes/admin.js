@@ -85,7 +85,6 @@ router.get("/usuarios/listar/institucion/:institucion_id", async (req, res) => {
         data: usuarios
     });
 });
-
 router.get("/usuarios/bloquear/:id_usuario", async (req, res) => {
     let { id_usuario } = req.params;
     await Usuario.query().patch({

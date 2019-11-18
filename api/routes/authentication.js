@@ -19,6 +19,7 @@ router.post("/login", async (req, res) => {
   user = user.toLowerCase();
   const cuenta = await Usuario.query().where("user", user);
   if (cuenta.length > 0) {
+    if (cuenta[0].blocked) return res.send({ response: false, message: "La cuenta se encuentra bloqueada, contacta con soporte" });
     bcrypt.compare(password, cuenta[0].password, async (err, valido) => {
       if (err) {
         res.send({

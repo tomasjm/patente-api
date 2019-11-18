@@ -62,6 +62,13 @@ router.post("/guardias/crear/:institucion_id", async (req, res) => {
 /**
  * USUARIOS
  */
+router.get("/usuarios/listar", async (req, res) => {
+    let usuarios = await Usuario.query();
+    return res.send({
+        response: true,
+        data: usuarios
+    });
+});
 router.get("/usuarios/listar/:tipo_usuario_id", async (req, res) => {
     let { tipo_usuario_id } = req.params;
     let usuarios = await Usuario.query().where("tipo_usuario_id", tipo_usuario_id);

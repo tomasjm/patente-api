@@ -14,8 +14,8 @@ exports.up = async (knex, Promise) => {
       table.increments("id").primary();
       table.string("user", 60);
       table.string("password");
-      table.string("token");
-      table.string("firebase_token");
+      table.string("token").defaultTo('');
+      table.string("firebase_token").defaultTo('');
       table.boolean("blocked").defaultTo(false);
       table
         .integer("institucion_id")

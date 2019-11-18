@@ -43,6 +43,7 @@ app.use(
 app.use("/patentes", require("./routes/patentes"));
 app.use("/notifications", require("./routes/notificaciones"));
 app.use("/instituciones", require("./routes/institucion"));
+app.use("/admin", require("./routes/admin"));
 // app.use('/eventos', require("./middlewares/userchecker"), require("./routes/eventos"));
 // app.use('/tipo', require("./routes/tipo"));
 // app.use('/landing', require("./routes/landing"));

@@ -35,6 +35,20 @@ exports.up = async (knex, Promise) => {
         .references("id")
         .inTable("tipo_usuario");
     });
+  await knex.schema
+    .createTable("patente", function (table) {
+      table.increments("id").primary();
+      table.string("patente", 10);
+      table.string("desc", 250);
+      table
+        .integer("usuario_id")
+        .unsigned()
+        .notNullable();
+      table
+        .foreign("usuario_id")
+        .references("id")
+        .inTable("usuario");
+    });
   await knex.schema.createTable("alerta", function (table) {
     table.increments("id").primary();
     table.string("tipo");
@@ -82,20 +96,7 @@ exports.up = async (knex, Promise) => {
         .inTable("usuario");
     });
 
-  await knex.schema
-    .createTable("patente", function (table) {
-      table.increments("id").primary();
-      table.string("patente", 10);
-      table.string("desc", 250);
-      table
-        .integer("usuario_id")
-        .unsigned()
-        .notNullable();
-      table
-        .foreign("usuario_id")
-        .references("id")
-        .inTable("usuario");
-    });
+
 
   return console.log("BASE DE DATOS CREADA EXITOSAMENTE");
 

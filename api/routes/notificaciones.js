@@ -46,7 +46,13 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
     if (user[0].token == null || user[0].token == '') return res.send({ response: false, error: "El usuario no tiene una sesión activa" });
     const notification_key = user[0].firebase_token;
     if (notification_key == null && notification_key == '') return res.send({ response: false, error: "no tiene key" });
-
+    await Alerta.query().insert({
+        tipo: item.tipo,
+        desde_usuario_id: userid,
+        hacia_usuario_id: user[0].id,
+        patente_id: patenteInfo[0].id,
+        fecha: moment().unix()
+    });
     notificationsType.forEach(item => {
         if (item.tipo == notification_type) {
             let message = {
@@ -58,13 +64,7 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
             };
             admin.messaging().send(message)
                 .then(async (response) => {
-                    await Alerta.query().insert({
-                        tipo: item.tipo,
-                        desde_usuario_id: userid,
-                        hacia_usuario_id: user[0].id,
-                        patente_id: patenteInfo[0].id,
-                        fecha: moment().unix()
-                    });
+
                     return res.send({
                         response: true
                     });

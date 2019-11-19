@@ -7,7 +7,7 @@ const Alerta = require("../models/Alerta");
 
 router.get("/", require("../middlewares/checksession"), async (req, res) => {
     let userid = req.userid;
-    let alertas = await Alerta.query().where("desde_usuario_id", userid);
+    let alertas = await Alerta.query().where("desde_usuario_id", userid).orderBy("fecha", "desc");
     return res.send({
         response: true,
         data: alertas

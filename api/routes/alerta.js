@@ -30,14 +30,14 @@ router.get("/confirmar/:id_alerta", require("../middlewares/checksession"), asyn
 router.get("/datosusuario/:id_alerta", require("../middlewares/checksession"), async (req, res) => {
     let userid = req.userid;
     let { id_alerta } = req.params;
-    let alerta = await Alerta.query().leftJoin(
-        "usuario",
+    let alerta = await Alerta.query().select("datos_usuario.*").leftJoin(
+        "datos_usuario",
         "alerta.hacia_usuario_id",
         "=",
-        "usuario.id"
+        "datos_usuario.usuario_id"
     ).where({
-        id: id_alerta,
-        desde_usuario_id: userid
+        "alerta.id": id_alerta,
+        "alerta.desde_usuario_id": userid
     });
     return res.send({
         response: true,

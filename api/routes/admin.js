@@ -3,6 +3,7 @@ const router = express.Router();
 
 const Usuario = require("../models/Usuario");
 const Patente = require("../models/Patente");
+const Alerta = require("../models/Alerta");
 const Tipousuario = require("../models/Tipousuario");
 // METODOS DE ENCRIPTACION
 const bcrypt = require("bcrypt");
@@ -14,11 +15,13 @@ const cryptPassword = password => {
 router.get("/estadisticas", async (req, res) => {
     let userCount = await Usuario.query().count("id as a");
     let patenteCount = await Patente.query().count("id as p");
+    let alertaCount = await Alerta.query().count("id as al");
     return res.send({
         response: true,
         data: {
             user_count: userCount[0].a,
-            patente_count: patenteCount[0].p
+            patente_count: patenteCount[0].p,
+            alerta_count: alertaCount[0].al
         }
     });
 });

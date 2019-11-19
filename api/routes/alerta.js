@@ -14,13 +14,13 @@ router.get("/", require("../middlewares/checksession"), async (req, res) => {
     });
 });
 
-router.get("/confirmar/:id_alerta", require("../middlewares/checksession"), async (req, res) => {
+router.get("/confirmar/:uuid_alerta", require("../middlewares/checksession"), async (req, res) => {
     let userid = req.userid;
-    let { id_alerta } = req.params;
+    let { uuid_alerta } = req.params;
     await Alerta.query().patch({
         confirmado: true
     }).where({
-        id: id_alerta,
+        uuid: uuid_alerta,
         hacia_usuario_id: userid
     });
     return res.send({

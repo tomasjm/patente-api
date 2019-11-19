@@ -54,6 +54,9 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
                     title: item.titulo,
                     body: item.mensaje
                 },
+                data: {
+                    click_action: "FLUTTER_NOTIFICATION_CLICK"
+                },
                 token: notification_key
             };
             admin.messaging().send(message)

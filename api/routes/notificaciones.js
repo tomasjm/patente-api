@@ -68,7 +68,7 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
                 data: {
                     uuid: notification_uuid,
                     patente: patente,
-                    fecha: fecha,
+                    fecha: fecha.toString(),
                     tipo: item.tipo,
                     click_action: "FLUTTER_NOTIFICATION_CLICK"
                 },

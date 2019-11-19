@@ -7,6 +7,7 @@ const Patente = require("../models/Patente");
 const Alerta = require("../models/Alerta");
 
 const moment = require("moment");
+const uuidv4 = require('uuid/v4');
 
 var notificationsJson = require("../notifications.json");
 var notificationsType = notificationsJson['notifications'];
@@ -49,25 +50,33 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
 
     notificationsType.forEach(item => {
         if (item.tipo == notification_type) {
+            const notification_uuid = uuidv4();
+            const fecha = moment().unix();
+            await Alerta.query().insert({
+                tipo: item.tipo,
+                uuid: notification_uuid,
+                desde_usuario_id: userid,
+                hacia_usuario_id: user[0].id,
+                patente_id: patenteInfo[0].id,
+                fecha: fecha
+            });
             let message = {
                 notification: {
                     title: item.titulo,
                     body: item.mensaje
                 },
                 data: {
+                    uuid: notification_uuid,
+                    patente: patente,
+                    fecha: fecha,
+                    tipo: item.tipo,
                     click_action: "FLUTTER_NOTIFICATION_CLICK"
                 },
                 token: notification_key
             };
             admin.messaging().send(message)
                 .then(async (response) => {
-                    await Alerta.query().insert({
-                        tipo: item.tipo,
-                        desde_usuario_id: userid,
-                        hacia_usuario_id: user[0].id,
-                        patente_id: patenteInfo[0].id,
-                        fecha: moment().unix()
-                    });
+                    await Alerta.query().patch({ enviado: true }).where("uuid", notification_uuid);
                     return res.send({
                         response: true
                     });

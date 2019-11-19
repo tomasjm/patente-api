@@ -54,6 +54,8 @@ exports.up = async (knex, Promise) => {
     table.string("tipo");
     table.boolean("confirmado").defaultTo(false);
     table.integer("fecha");
+    table.string("uuid", 60);
+    table.boolean("enviado").defaultTo(false);
     table
       .integer("desde_usuario_id")
       .unsigned()

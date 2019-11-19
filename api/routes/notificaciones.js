@@ -48,7 +48,7 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
     const notification_key = user[0].firebase_token;
     if (notification_key == null && notification_key == '') return res.send({ response: false, error: "no tiene key" });
 
-    notificationsType.forEach(item => {
+    notificationsType.forEach(async item => {
         if (item.tipo == notification_type) {
             const notification_uuid = uuidv4();
             const fecha = moment().unix();

@@ -84,7 +84,7 @@ router.post("/guardias/editar/:guardia_id", async (req, res) => {
         blocked,
         disponible,
         institucion_id,
-    });
+    }).where("id", guardia_id);
     if (password != null && password != '') await Usuario.query().patch({ password: cryptPassword(password) }).where("id", guardia_id);
     await Datosusuario.query().patch({ nombre, fono, correo }).where("usuario_id", guardia_id);
     return res.send({

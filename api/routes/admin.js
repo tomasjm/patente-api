@@ -78,7 +78,7 @@ router.post("/guardias/editar/:guardia_id", async (req, res) => {
     let { guardia_id } = req.params;
 
     let guardia = await Usuario.query().where("id", guardia_id);
-    if (guardia.length != 0) return res.send({ response: false, message: "no existe este usuario" });
+    if (guardia.length == 0) return res.send({ response: false, message: "no existe este usuario" });
     await Usuario.query().patch({
         user,
         blocked,

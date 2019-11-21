@@ -5,6 +5,7 @@ const Usuario = require("../models/Usuario");
 const Patente = require("../models/Patente");
 const Alerta = require("../models/Alerta");
 const Tipousuario = require("../models/Tipousuario");
+const Datosusuario = require("../models/Datosusuario");
 // METODOS DE ENCRIPTACION
 const bcrypt = require("bcrypt");
 const salt = 12;
@@ -68,6 +69,24 @@ router.post("/guardias/crear/:institucion_id", async (req, res) => {
         institucion_id,
         tipo_usuario_id: 2
     });
+    return res.send({
+        response: true
+    });
+});
+router.post("/guardias/editar/:guardia_id", async (req, res) => {
+    let { user, password, nombre, fono, correo, blocked, disponible, institucion_id } = req.body;
+    let { guardia_id } = req.params;
+
+    let guardia = await Usuario.query().where("id", guardia_id);
+    if (guardia.length != 0) return res.send({ response: false, message: "no existe este usuario" });
+    await Usuario.query().patch({
+        user,
+        blocked,
+        disponible,
+        institucion_id,
+    });
+    if (password != null && password != '') await Usuario.query().patch({ password: cryptPassword(password) }).where("id", guardia_id);
+    await Datosusuario.query().patch({ nombre, fono, correo }).where("usuario_id", guardia_id);
     return res.send({
         response: true
     });

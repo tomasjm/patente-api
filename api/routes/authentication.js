@@ -20,6 +20,7 @@ router.post("/login", async (req, res) => {
   const cuenta = await Usuario.query().where("user", user);
   if (cuenta.length > 0) {
     if (cuenta[0].blocked) return res.send({ response: false, message: "La cuenta se encuentra bloqueada, contacta con soporte" });
+    if (!cuenta[0].disponible) return res.send({ response: false, message: "La cuenta no se encuentra habilitada, contacta con soporte" });
     bcrypt.compare(password, cuenta[0].password, async (err, valido) => {
       if (err) {
         res.send({
@@ -114,19 +115,21 @@ router.get("/check/:token", async (req, res) => {
           "institucion.id"
         )
         .where("usuario.id", id_cuenta);
+      if (user[0].blocked) return res.send({ response: false, message: "Este usuario se encuentra bloqueado" });
+      if (!user[0].disponible) return res.send({ response: false, message: "Este usuario no se encuentra habilitado" });
       if (user[0].token == token) {
-        res.send({
+        return res.send({
           response: true,
           data: user
         });
       } else {
-        res.send({
+        return res.send({
           response: false,
           message: "Se ha finalizado la sesión"
         });
       }
     } else {
-      res.send({
+      return res.send({
         response: false,
         message: "Este token ha expirado"
       });

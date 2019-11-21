@@ -25,7 +25,7 @@ router.post("/login", async (req, res) => {
       if (err) {
         res.send({
           response: false,
-          error: err
+          message: err
         });
       }
       if (valido) {
@@ -52,7 +52,7 @@ router.post("/login", async (req, res) => {
       } else {
         res.send({
           response: false,
-          err: "Datos incorrectos"
+          message: "Datos incorrectos"
         });
       }
     });
@@ -89,7 +89,7 @@ router.post("/register", async (req, res) => {
       .catch(err => {
         res.send({
           response: false,
-          error: err
+          message: err
         });
       });
   }

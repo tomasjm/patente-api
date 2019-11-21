@@ -76,7 +76,7 @@ router.post("/", require("../middlewares/checksession"), async (req, res) => {
   const userid = req.userid;
   const { patente, desc } = req.body;
   let formattedPatente = patente.toUpperCase();
-  let regExp = new RegExp("^[A-Z0-9]{4}-[A-Z0-9]{4}");
+  let regExp = new RegExp("^[A-Z]{2}[A-Z]{2}[0-9]{2}");
   let patenteIsValid = regExp.test(formattedPatente);
   if (!patenteIsValid) return res.send({ response: false, error: "Patente no es valida, formato AAAA-BBBB" });
   let patenteExists = await Patente.query().select("*").where({ patente: formattedPatente });

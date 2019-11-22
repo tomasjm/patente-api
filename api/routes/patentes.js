@@ -57,9 +57,9 @@ router.delete(
     const userid = req.userid;
     const { patente_id } = req.params;
     await Alerta.query().delete().where("patente_id", patente_id)
-    const patente = await Patente.query()
+    await Patente.query()
       .delete()
-      .where({ id: patenteid, usuario_id: userid });
+      .where({ id: patente_id, usuario_id: userid });
     res.send({
       response: true
     });

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Patente = require("../models/Patente");
-const Datosusuario = require("../models/Datosusuario");
+const Alerta = require("../models/Alerta");
 
 
 /**
@@ -51,11 +51,12 @@ router.get("/:patente", async (req, res) => {
  * 
  */
 router.delete(
-  "/:id_patente",
+  "/:patente_id",
   require("../middlewares/checksession"),
   async (req, res) => {
     const userid = req.userid;
-    const patenteid = req.params.id_patente;
+    const { patente_id } = req.params;
+    await Alerta.query().delete().where("patente_id", patente_id)
     const patente = await Patente.query()
       .delete()
       .where({ id: patenteid, usuario_id: userid });

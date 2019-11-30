@@ -12,8 +12,8 @@ const cryptPassword = password => {
     return bcrypt.hashSync(password, salt);
 };
 
-router.get("/estadisticas/:institucion_id", async (req, res) => {
-    let { institucion_id } = req.params;
+router.get("/estadisticas", async (req, res) => {
+    let institucion_id = req.institucion_id;
     let userCount = await Usuario.query().count("id as a").where({ institucion_id });
     let patenteCount = await Patente.query().count("id as p").where({ institucion_id });
     let alertaCount = await Alerta.query().count("id as al").where({ institucion_id });
@@ -30,8 +30,8 @@ router.get("/estadisticas/:institucion_id", async (req, res) => {
 /**
  * GUARDIAS
  */
-router.get("/guardias/:institucion_id", async (req, res) => {
-    let { institucion_id } = req.params;
+router.get("/guardias", async (req, res) => {
+    let institucion_id = req.institucion_id;
     let guardias = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
         "institucion",
         "usuario.institucion_id",
@@ -51,9 +51,9 @@ router.get("/guardias/:institucion_id", async (req, res) => {
         data: guardias
     });
 });
-router.post("/guardias/crear/:institucion_id", async (req, res) => {
+router.post("/guardias/crear", async (req, res) => {
     let { user, password } = req.body;
-    let { institucion_id } = req.params;
+    let institucion_id = req.institucion_id;
 
     if (institucion_id == 1) return res.send({ response: false, message: "Un guardia tiene que ser de una institución" });
 
@@ -72,6 +72,7 @@ router.post("/guardias/crear/:institucion_id", async (req, res) => {
 router.post("/guardias/editar/:guardia_id", async (req, res) => {
     let { user, password, nombre, fono, correo, blocked, disponible, institucion_id } = req.body;
     let { guardia_id } = req.params;
+    let institucion_id = req.institucion_id;
 
     let guardia = await Usuario.query().where("id", guardia_id);
     if (guardia.length == 0) return res.send({ response: false, message: "no existe este usuario" });
@@ -80,31 +81,16 @@ router.post("/guardias/editar/:guardia_id", async (req, res) => {
         blocked,
         disponible,
         institucion_id,
-    }).where("id", guardia_id);
+    }).where({
+        id: guardia_id,
+        institucion_id
+
+    });
     if (password != null && password != '') await Usuario.query().patch({ password: cryptPassword(password) }).where("id", guardia_id);
     await Datosusuario.query().patch({ nombre, fono, correo }).where("usuario_id", guardia_id);
     return res.send({
         response: true
     });
 });
-router.post("/guardias/habilitar/:guardia_id", async (req, res) => {
-    let { guardia_id } = req.params;
-    await Usuario.query().patch({
-        guardia_habilitado: true
-    }).where("id", guardia_id);
-    return res.send({
-        response: true
-    });
-});
-router.post("/guardias/deshabilitar/:guardia_id", async (req, res) => {
-    let { guardia_id } = req.params;
-    await Usuario.query().patch({
-        guardia_habilitado: false
-    }).where("id", guardia_id);
-    return res.send({
-        response: true
-    });
-});
-
 
 module.exports = router;

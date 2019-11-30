@@ -46,6 +46,7 @@ router.post("/login", async (req, res) => {
           data: {
             id: cuenta[0].id,
             tipo_usuario_id: cuenta[0].tipo_usuario_id,
+            institucion_id: cuenta[0].institucion_id,
             guardia_habilitado: cuenta[0].guardia_habilitado,
             token
           }

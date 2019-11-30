@@ -45,7 +45,7 @@ app.use("/notifications", require("./routes/notificaciones"));
 app.use("/instituciones", require("./routes/institucion"));
 app.use("/admin", require("./routes/admin"));
 app.use("/alertas", require("./routes/alerta"));
-app.use("/inadmin", require("./routes/inadmin"));
+app.use("/subadmin", require("./routes/subadmin"));
 // app.use('/eventos', require("./middlewares/userchecker"), require("./routes/eventos"));
 // app.use('/tipo', require("./routes/tipo"));
 // app.use('/landing', require("./routes/landing"));

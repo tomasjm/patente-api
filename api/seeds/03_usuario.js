@@ -28,7 +28,7 @@ exports.seed = function (knex, Promise) {
           institucion_id: 1
         },
         {
-          id: 1,
+          id: 2,
           user: "inadmin",
           password: cryptPassword("password"),
           token: null,
@@ -37,7 +37,7 @@ exports.seed = function (knex, Promise) {
           institucion_id: 2
         },
         {
-          id: 2,
+          id: 3,
           user: "guardia",
           password: cryptPassword("password"),
           guardia_habilitado: true,
@@ -47,7 +47,7 @@ exports.seed = function (knex, Promise) {
           institucion_id: 2
         },
         {
-          id: 3,
+          id: 4,
           user: "usuario",
           password: cryptPassword("password"),
           token: null,

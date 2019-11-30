@@ -70,7 +70,7 @@ router.post("/guardias/crear", async (req, res) => {
     });
 });
 router.post("/guardias/editar/:guardia_id", async (req, res) => {
-    let { user, password, nombre, fono, correo, blocked, disponible, institucion_id } = req.body;
+    let { user, password, nombre, fono, correo, guardia_habilitado } = req.body;
     let { guardia_id } = req.params;
     let institucion_id = req.institucion_id;
 
@@ -78,16 +78,20 @@ router.post("/guardias/editar/:guardia_id", async (req, res) => {
     if (guardia.length == 0) return res.send({ response: false, message: "no existe este usuario" });
     await Usuario.query().patch({
         user,
-        blocked,
         disponible,
-        institucion_id,
+        guardia_habilitado,
     }).where({
         id: guardia_id,
         institucion_id
-
     });
-    if (password != null && password != '') await Usuario.query().patch({ password: cryptPassword(password) }).where("id", guardia_id);
-    await Datosusuario.query().patch({ nombre, fono, correo }).where("usuario_id", guardia_id);
+    if (password != null && password != '') await Usuario.query().patch({ password: cryptPassword(password) }).where({
+        id: guardia_id,
+        institucion_id
+    });
+    await Datosusuario.query().patch({ nombre, fono, correo }).where({
+        usuario_id: guardia_id,
+        institucion_id
+    });
     return res.send({
         response: true
     });

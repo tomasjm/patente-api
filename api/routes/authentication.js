@@ -65,7 +65,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  var { user, password, institucion_id } = req.body;
+  var { user, password } = req.body;
   user = user.toLowerCase();
   const userAccount = await Usuario.query().where("user", user);
   if (userAccount.length > 0) {
@@ -78,8 +78,7 @@ router.post("/register", async (req, res) => {
       .insert({
         user,
         password: cryptPassword(password),
-        tipo_usuario_id: 3,
-        institucion_id
+        tipo_usuario_id: 3
       })
       .then(() => {
         res.send({

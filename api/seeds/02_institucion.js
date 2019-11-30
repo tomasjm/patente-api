@@ -7,14 +7,18 @@ exports.seed = function (knex, Promise) {
       return knex("institucion").insert([
         {
           id: 1,
-          institucion: "Universidad de la Frontera",
+          institucion: "Sin institución",
         },
         {
           id: 2,
-          institucion: "Universidad Autonoma",
+          institucion: "Universidad de la Frontera",
         },
         {
           id: 3,
+          institucion: "Universidad Autonoma",
+        },
+        {
+          id: 4,
           institucion: "Universidad Mayor",
         }
       ]);

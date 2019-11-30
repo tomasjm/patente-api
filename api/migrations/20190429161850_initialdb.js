@@ -21,7 +21,7 @@ exports.up = async (knex, Promise) => {
       table
         .integer("institucion_id")
         .unsigned()
-        .notNullable();
+        .notNullable().defaultTo(1);
       table
         .foreign("institucion_id")
         .references("id")

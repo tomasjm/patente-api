@@ -61,6 +61,8 @@ router.post("/guardias/crear/:institucion_id", async (req, res) => {
     let { user, password } = req.body;
     let { institucion_id } = req.params;
 
+    if (institucion_id == 1) return res.send({ response: false, message: "Un guardia tiene que ser de una institución" });
+
     let guardia = await Usuario.query().where("user", user);
     if (guardia.length != 0) return res.send({ response: false, message: "ya está registrado" });
     await Usuario.query().insert({

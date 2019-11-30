@@ -51,7 +51,7 @@ router.get("/guardias", async (req, res) => {
         "usuario.id",
         "=",
         "datos_usuario.usuario_id"
-    ).where("tipo_usuario_id", 2).orderBy("id", "asc");
+    ).where("tipo_usuario_id", 3).orderBy("id", "asc");
     return res.send({
         response: true,
         data: guardias

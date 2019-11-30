@@ -71,6 +71,10 @@ router.post("/guardias/crear/:institucion_id", async (req, res) => {
         institucion_id,
         tipo_usuario_id: 3
     });
+    let created_user_id = await Usuario.query().where({ user });
+    await Datosusuario.query().insert({
+        usuario_id: created_user_id[0].id
+    });
     return res.send({
         response: true
     });

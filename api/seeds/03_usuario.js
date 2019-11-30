@@ -29,7 +29,7 @@ exports.seed = function (knex, Promise) {
         },
         {
           id: 2,
-          user: "inadmin",
+          user: "subadmin",
           password: cryptPassword("password"),
           token: null,
           firebase_token: null,

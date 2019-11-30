@@ -73,7 +73,6 @@ router.post("/guardias/editar/:guardia_id", async (req, res) => {
     if (guardia.length == 0) return res.send({ response: false, message: "no existe este usuario" });
     await Usuario.query().patch({
         user,
-        disponible,
         guardia_habilitado,
     }).where({
         id: guardia_id,

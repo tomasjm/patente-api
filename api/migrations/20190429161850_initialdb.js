@@ -18,6 +18,7 @@ exports.up = async (knex, Promise) => {
       table.string("firebase_token").defaultTo('');
       table.boolean("blocked").defaultTo(false);
       table.boolean("disponible").defaultTo(true);
+      table.boolean("guardia_habilitado").defaultTo(false);
       table
         .integer("institucion_id")
         .unsigned()

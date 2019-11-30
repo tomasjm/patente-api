@@ -28,13 +28,23 @@ exports.seed = function (knex, Promise) {
           institucion_id: 1
         },
         {
-          id: 2,
-          user: "guardia",
+          id: 1,
+          user: "inadmin",
           password: cryptPassword("password"),
           token: null,
           firebase_token: null,
           tipo_usuario_id: 2,
-          institucion_id: 1
+          institucion_id: 2
+        },
+        {
+          id: 2,
+          user: "guardia",
+          password: cryptPassword("password"),
+          guardia_habilitado: true,
+          token: null,
+          firebase_token: null,
+          tipo_usuario_id: 4,
+          institucion_id: 2
         },
         {
           id: 3,

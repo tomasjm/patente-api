@@ -41,7 +41,7 @@ router.get("/tipos", async (req, res) => {
  * GUARDIAS
  */
 router.get("/guardias", async (req, res) => {
-    let guardias = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
+    let guardias = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
         "institucion",
         "usuario.institucion_id",
         "=",

@@ -16,7 +16,7 @@ const checksession = (req, res, next) => {
       next();
     }
     if (err) {
-      res.send({
+      return res.send({
         response: false,
         error: "El token es invalido!"
       });

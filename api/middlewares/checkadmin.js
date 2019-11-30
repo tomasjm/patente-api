@@ -14,7 +14,7 @@ const checksession = (req, res, next) => {
         if (payload) {
             if (payload.tipo_usuario_id < 2) return res.send({ response: false, message: "No tienes permisos de administrador " });
             req.userid = payload.id;
-            req.tipo_usuario_id = payload.tipo_usuario_id;
+            req.institucion_id = payload.institucion_id;
             next();
         }
         if (err) {

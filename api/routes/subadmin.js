@@ -13,16 +13,15 @@ const cryptPassword = password => {
 
 router.get("/estadisticas", async (req, res) => {
     let institucion_id = req.institucion_id;
-    return res.send(institucion_id);
-    // let userCount = await Usuario.query().count("id as a").where({ institucion_id, tipo_usuario_id: 3 });
-    // let alertaCount = await Alerta.query().count("id as al").where({ institucion_id });
-    // return res.send({
-    //     response: true,
-    //     data: {
-    //         user_count: userCount[0].a,
-    //         patente_count: patenteCount[0].p,
-    //     }
-    // });
+    let userCount = await Usuario.query().count("id as a").where({ institucion_id, tipo_usuario_id: 3 });
+    let alertaCount = await Alerta.query().count("id as al").where({ institucion_id });
+    return res.send({
+        response: true,
+        data: {
+            user_count: userCount[0].a,
+            patente_count: patenteCount[0].p,
+        }
+    });
 });
 
 /**

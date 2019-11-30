@@ -83,8 +83,7 @@ router.post("/guardias/editar/:guardia_id", async (req, res) => {
         institucion_id
     });
     await Datosusuario.query().patch({ nombre, fono, correo }).where({
-        usuario_id: guardia_id,
-        institucion_id
+        usuario_id: guardia_id
     });
     return res.send({
         response: true

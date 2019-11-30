@@ -78,7 +78,7 @@ router.post("/register", async (req, res) => {
       .insert({
         user,
         password: cryptPassword(password),
-        tipo_usuario_id: 3
+        tipo_usuario_id: 4
       })
       .then(() => {
         res.send({

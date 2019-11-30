@@ -76,7 +76,7 @@ router.post("/guardias/crear/:institucion_id", async (req, res) => {
     });
 });
 router.post("/guardias/editar/:guardia_id", async (req, res) => {
-    let { user, password, nombre, fono, correo, blocked, disponible, institucion_id } = req.body;
+    let { user, password, nombre, fono, correo, blocked, disponible, institucion_id, guardia_habilitado } = req.body;
     let { guardia_id } = req.params;
 
     let guardia = await Usuario.query().where("id", guardia_id);
@@ -86,6 +86,7 @@ router.post("/guardias/editar/:guardia_id", async (req, res) => {
         blocked,
         disponible,
         institucion_id,
+        guardia_habilitado
     }).where("id", guardia_id);
     if (password != null && password != '') await Usuario.query().patch({ password: cryptPassword(password) }).where("id", guardia_id);
     await Datosusuario.query().patch({ nombre, fono, correo }).where("usuario_id", guardia_id);

@@ -69,7 +69,7 @@ router.post("/guardias/crear/:institucion_id", async (req, res) => {
         user,
         password: cryptPassword(password),
         institucion_id,
-        tipo_usuario_id: 2
+        tipo_usuario_id: 3
     });
     return res.send({
         response: true

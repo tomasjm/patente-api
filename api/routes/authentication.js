@@ -32,6 +32,7 @@ router.post("/login", async (req, res) => {
         const token = await jwt.sign(
           {
             id: cuenta[0].id,
+            institucion_id: cuenta[0].institucion_id,
             exp: moment()
               .add("30", "day")
               .unix()

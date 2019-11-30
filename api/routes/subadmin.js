@@ -13,7 +13,6 @@ const cryptPassword = password => {
 
 router.get("/estadisticas", async (req, res) => {
     let institucion_id = req.institucion_id;
-    return res.send({ institucion_id, tipo_usuario_id: 3 });
     let userCount = await Usuario.query().count("id as a").where({ institucion_id, tipo_usuario_id: 3 });
     let alertaCount = await Alerta.query().count("id as al").where({ institucion_id });
     return res.send({

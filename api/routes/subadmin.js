@@ -27,7 +27,7 @@ router.get("/estadisticas", async (req, res) => {
  */
 router.get("/guardias", async (req, res) => {
     let institucion_id = req.institucion_id;
-    let guardias = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
+    let guardias = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
         "institucion",
         "usuario.institucion_id",
         "=",

@@ -69,7 +69,11 @@ router.post("/login", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   var { user, password } = req.body;
+
   user = user.toLowerCase();
+  // let regExp = new RegExp("^([0-9]{1,2}\.[0-9]{3}\.[0-9]{1,3}-[0-9k])"); // 00.000.000-0
+  // let userIsValid = regExp.test(user);
+  // if (!userIsValid) return res.send({ response: false, message: "No has ingresado un rut valido" });
   const userAccount = await Usuario.query().where("user", user);
   if (userAccount.length > 0) {
     res.send({

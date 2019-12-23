@@ -109,6 +109,28 @@ router.get("/usuarios/listar", async (req, res) => {
         data: usuarios
     });
 });
+router.post("/usuarios/crear/:tipo_usuario_id/:institucion_id", async (req, res) => {
+    let { user, password } = req.body;
+    let { tipo_usuario_id, institucion_id } = req.params;
+
+    if (institucion_id == 1) return res.send({ response: false, message: "Debe tener una institución" });
+
+    let selectedUser = await Usuario.query().where("user", user);
+    if (selectedUser.length != 0) return res.send({ response: false, message: "ya está registrado" });
+    await Usuario.query().insert({
+        user,
+        password: cryptPassword(password),
+        institucion_id,
+        tipo_usuario_id
+    });
+    let created_user_id = await Usuario.query().where({ user });
+    await Datosusuario.query().insert({
+        usuario_id: created_user_id[0].id
+    });
+    return res.send({
+        response: true
+    });
+});
 router.get("/usuarios/listar/tipo/:tipo_usuario_id", async (req, res) => {
     let { tipo_usuario_id } = req.params;
     let usuarios = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono")

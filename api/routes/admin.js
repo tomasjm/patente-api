@@ -111,7 +111,7 @@ router.get("/usuarios/listar", async (req, res) => {
 });
 router.get("/usuarios/listar/tipo/:tipo_usuario_id", async (req, res) => {
     let { tipo_usuario_id } = req.params;
-    await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono")
+    let usuarios = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono")
         .leftJoin(
             "institucion",
             "usuario.institucion_id",

@@ -111,7 +111,18 @@ router.get("/usuarios/listar", async (req, res) => {
 });
 router.get("/usuarios/listar/tipo/:tipo_usuario_id", async (req, res) => {
     let { tipo_usuario_id } = req.params;
-    let usuarios = await Usuario.query().where("tipo_usuario_id", tipo_usuario_id);
+    await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono")
+        .leftJoin(
+            "institucion",
+            "usuario.institucion_id",
+            "=",
+            "institucion.id"
+        ).leftJoin(
+            "datos_usuario",
+            "usuario.id",
+            "=",
+            "datos_usuario.usuario_id"
+        ).where("tipo_usuario_id", tipo_usuario_id).orderBy("id", "asc");
     return res.send({
         response: true,
         data: usuarios

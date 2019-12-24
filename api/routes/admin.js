@@ -213,4 +213,46 @@ router.get("/usuarios/desbloquear/:id_usuario", async (req, res) => {
         response: true
     });
 });
+
+// Instituciones
+router.post("/instituciones", async (req, res) => {
+    const { institucion } = req.body;
+    const institucionExistente = await Institucion.query().where("institucion", institucion);
+    if (institucionExistente.length != 0) return res.send({ response: false, message: "Ya está registrada esta institución" });
+    let institucionResp = await Institucion.insert({ institucion });
+    if (institucionResp) return res.send({ response: true });
+    return res.send({
+        response: false,
+        message: "No se ha podido crear un registro de la institución"
+    });
+});
+
+router.put("/instituciones/:id_institucion", async (req, res) => {
+    const institucionid = req.params.id_institucion;
+    const institucion = req.body.institucion;
+    await Institucion.query()
+        .patch({
+            institucion
+        })
+        .where({ id: institucionid });
+
+    return res.send({
+        response: true
+    });
+});
+
+
+router.delete("/instituciones/:id_institucion", async (req, res) => {
+    const institucionid = req.params.id_institucion;
+    await Institucion.query()
+        .delete()
+        .where({ id: institucionid });
+    await Usuario.query().patch({
+        institucion_id: 1
+    }).where("institucion_id", institucionid);
+    return res.send({
+        response: true
+    });
+});
+
 module.exports = router;

@@ -131,6 +131,25 @@ router.post("/usuarios/crear/:tipo_usuario_id/:institucion_id", async (req, res)
         response: true
     });
 });
+router.post("/usuarios/editar/:user_id", async (req, res) => {
+    let { user, password, nombre, fono, correo, blocked, disponible, institucion_id, guardia_habilitado } = req.body;
+    let { user_id } = req.params;
+
+    let fUser = await Usuario.query().where("id", user_id);
+    if (fUser.length == 0) return res.send({ response: false, message: "no existe este usuario" });
+    await Usuario.query().patch({
+        user,
+        blocked,
+        disponible,
+        institucion_id,
+        guardia_habilitado
+    }).where("id", user_id);
+    if (password != null && password != '') await Usuario.query().patch({ password: cryptPassword(password) }).where("id", user_id);
+    await Datosusuario.query().patch({ nombre, fono, correo }).where("usuario_id", user_id);
+    return res.send({
+        response: true
+    });
+});
 router.get("/usuarios/listar/tipo/:tipo_usuario_id", async (req, res) => {
     let { tipo_usuario_id } = req.params;
     let usuarios = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono")

@@ -6,6 +6,7 @@ const Patente = require("../models/Patente");
 const Alerta = require("../models/Alerta");
 const Tipousuario = require("../models/Tipousuario");
 const Datosusuario = require("../models/Datosusuario");
+const Institucion = require("../models/Institucion");
 // METODOS DE ENCRIPTACION
 const bcrypt = require("bcrypt");
 const salt = 12;

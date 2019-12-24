@@ -220,7 +220,7 @@ router.post("/instituciones", async (req, res) => {
     const { institucion } = req.body;
     const institucionExistente = await Institucion.query().where("institucion", institucion);
     if (institucionExistente.length != 0) return res.send({ response: false, message: "Ya está registrada esta institución" });
-    let institucionResp = await Institucion.insert({ institucion });
+    let institucionResp = await Institucion.query().insert({ institucion });
     if (institucionResp) return res.send({ response: true });
     return res.send({
         response: false,

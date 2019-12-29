@@ -72,7 +72,7 @@ router.post("/register", async (req, res) => {
 
   user = user.toLowerCase();
 
-  let regExp = new RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9.-]+\.[A-Z]{2,}$"); // email
+  let regExp = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"); // email
   let userIsValid = regExp.test(user);
   if (!userIsValid) return res.send({ response: false, message: "No has ingresado un correo válido" });
   const userAccount = await Usuario.query().where("user", user);

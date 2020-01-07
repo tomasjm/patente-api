@@ -52,15 +52,15 @@ router.post("/guardias/crear", async (req, res) => {
 
     if (institucion_id == 1) return res.send({ response: false, message: "Un guardia tiene que ser de una institución" });
 
-    let guardia = await Usuario.query().where("user", user);
+    let guardia = await Usuario.query().where("usuario", user);
     if (guardia.length != 0) return res.send({ response: false, message: "ya está registrado" });
     await Usuario.query().insert({
-        user,
+        usuario: user,
         password: cryptPassword(password),
         institucion_id,
         tipo_usuario_id: 3
     });
-    let created_user_id = await Usuario.query().where({ user });
+    let created_user_id = await Usuario.query().where({ usuario: user });
     await Datosusuario.query().insert({
         usuario_id: created_user_id[0].id
     });
@@ -76,7 +76,7 @@ router.post("/guardias/editar/:guardia_id", async (req, res) => {
     let guardia = await Usuario.query().where("id", guardia_id);
     if (guardia.length == 0) return res.send({ response: false, message: "no existe este usuario" });
     await Usuario.query().patch({
-        user,
+        usuario: user,
         guardia_habilitado,
     }).where({
         id: guardia_id,

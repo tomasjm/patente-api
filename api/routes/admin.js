@@ -42,7 +42,7 @@ router.get("/tipos", async (req, res) => {
  * GUARDIAS
  */
 router.get("/guardias", async (req, res) => {
-    let guardias = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
+    let guardias = await Usuario.query().select("usuario.id", "usuario.usuario", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
         "institucion",
         "usuario.institucion_id",
         "=",
@@ -64,15 +64,15 @@ router.post("/guardias/crear/:institucion_id", async (req, res) => {
 
     if (institucion_id == 1) return res.send({ response: false, message: "Un guardia tiene que ser de una institución" });
 
-    let guardia = await Usuario.query().where("user", user);
+    let guardia = await Usuario.query().where("usuario", user);
     if (guardia.length != 0) return res.send({ response: false, message: "ya está registrado" });
     await Usuario.query().insert({
-        user,
+        usuario: user,
         password: cryptPassword(password),
         institucion_id,
         tipo_usuario_id: 3
     });
-    let created_user_id = await Usuario.query().where({ user });
+    let created_user_id = await Usuario.query().where({ usuario: user });
     await Datosusuario.query().insert({
         usuario_id: created_user_id[0].id
     });
@@ -87,7 +87,7 @@ router.post("/guardias/editar/:guardia_id", async (req, res) => {
     let guardia = await Usuario.query().where("id", guardia_id);
     if (guardia.length == 0) return res.send({ response: false, message: "no existe este usuario" });
     await Usuario.query().patch({
-        user,
+        usuario: user,
         blocked,
         disponible,
         institucion_id,
@@ -116,15 +116,15 @@ router.post("/usuarios/crear/:tipo_usuario_id/:institucion_id", async (req, res)
 
     if (institucion_id == 1) return res.send({ response: false, message: "Debe tener una institución" });
 
-    let selectedUser = await Usuario.query().where("user", user);
+    let selectedUser = await Usuario.query().where("usuario", user);
     if (selectedUser.length != 0) return res.send({ response: false, message: "ya está registrado" });
     await Usuario.query().insert({
-        user,
+        usuario: user,
         password: cryptPassword(password),
         institucion_id,
         tipo_usuario_id
     });
-    let created_user_id = await Usuario.query().where({ user });
+    let created_user_id = await Usuario.query().where({ usuario: user });
     await Datosusuario.query().insert({
         usuario_id: created_user_id[0].id
     });
@@ -139,7 +139,7 @@ router.post("/usuarios/editar/:user_id", async (req, res) => {
     let fUser = await Usuario.query().where("id", user_id);
     if (fUser.length == 0) return res.send({ response: false, message: "no existe este usuario" });
     await Usuario.query().patch({
-        user,
+        usuario: user,
         blocked,
         disponible,
         institucion_id,
@@ -153,7 +153,7 @@ router.post("/usuarios/editar/:user_id", async (req, res) => {
 });
 router.get("/usuarios/listar/tipo/:tipo_usuario_id", async (req, res) => {
     let { tipo_usuario_id } = req.params;
-    let usuarios = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono")
+    let usuarios = await Usuario.query().select("usuario.id", "usuario.usuario", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono")
         .leftJoin(
             "institucion",
             "usuario.institucion_id",

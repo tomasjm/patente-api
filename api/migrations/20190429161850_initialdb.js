@@ -12,11 +12,11 @@ exports.up = async (knex, Promise) => {
   await knex.schema
     .createTable("usuario", function (table) {
       table.increments("id").primary();
-      table.string("user", 60);
+      table.string("usuario", 60);
       table.string("password");
       table.string("token").defaultTo('');
       table.string("firebase_token").defaultTo('');
-      table.boolean("blocked").defaultTo(false);
+      table.boolean("bloqueado").defaultTo(false);
       table.boolean("disponible").defaultTo(true);
       table.boolean("guardia_habilitado").defaultTo(false);
       table
@@ -88,6 +88,7 @@ exports.up = async (knex, Promise) => {
       table.string("nombre", 60);
       table.string("anexo", 20);
       table.string("correo", 60);
+      table.boolean("correo_confirmado").defaultTo(false);
       table.string("fono", 20);
       table
         .integer("usuario_id")
@@ -98,9 +99,21 @@ exports.up = async (knex, Promise) => {
         .references("id")
         .inTable("usuario");
     });
-
-
-
+  await knex.schema
+    .createTable("validacion", function (table) {
+      table.increments("id").primary();
+      table.string("tipo", 60);
+      table.string("codigo", 20);
+      table.boolean("confirmado").defaultTo(false);
+      table
+        .integer("usuario_id")
+        .unsigned()
+        .notNullable();
+      table
+        .foreign("usuario_id")
+        .references("id")
+        .inTable("usuario");
+    });
   return console.log("BASE DE DATOS CREADA EXITOSAMENTE");
 
 

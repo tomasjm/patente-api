@@ -20,7 +20,7 @@ exports.seed = function (knex, Promise) {
       return knex("usuario").insert([
         {
           id: 1,
-          user: "admin",
+          usuario: "admin",
           password: cryptPassword("password"),
           token: null,
           firebase_token: null,
@@ -29,7 +29,7 @@ exports.seed = function (knex, Promise) {
         },
         {
           id: 2,
-          user: "subadmin",
+          usuario: "subadmin",
           password: cryptPassword("password"),
           token: null,
           firebase_token: null,
@@ -38,7 +38,7 @@ exports.seed = function (knex, Promise) {
         },
         {
           id: 3,
-          user: "guardia",
+          usuario: "guardia",
           password: cryptPassword("password"),
           guardia_habilitado: true,
           token: null,
@@ -48,7 +48,7 @@ exports.seed = function (knex, Promise) {
         },
         {
           id: 4,
-          user: "usuario",
+          usuario: "usuario",
           password: cryptPassword("password"),
           token: null,
           firebase_token: 'e1RT3FLNa6Q:APA91bGH7RA-I_O_psUf5Ggno2FVEv0Z2-kaRrPr6h6YABHcKhi1c0aUwRESdRdgLymk-boaSrygjlMs4eroEkp4IVvogCd7FKiCF5kFPcnTxtt9-stCZ6PU1MkGbyq4xcj7O_yy0v83',

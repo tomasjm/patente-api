@@ -7,20 +7,26 @@ const config = require("../config.json");
 
 // METODOS DE ENCRIPTACION
 const bcrypt = require("bcrypt");
-const salt = 12;
-const cryptPassword = password => {
-  return bcrypt.hashSync(password, salt);
-};
+
 
 const Usuario = require("../models/Usuario");
+const Datosusuario = require("../models/Datosusuario");
+const Validacion = require("../models/Validacion");
+
+const cryptPassword = password => bcrypt.hashSync(password, 12);
+
+const randomFixedInteger = length => Math.floor(Math.pow(10, length - 1) + Math.random() * (Math.pow(10, length) - Math.pow(10, length - 1) - 1));
+
+
 
 router.post("/login", async (req, res) => {
   var { user, password } = req.body;
   user = user.toLowerCase();
-  const cuenta = await Usuario.query().where("user", user);
+  const cuenta = await Usuario.query().where("usuario", user); // SELECT * FROM usuarios WHERE usuario = tom
   if (cuenta.length > 0) {
-    if (cuenta[0].blocked) return res.send({ response: false, message: "La cuenta se encuentra bloqueada, contacta con soporte" });
-    if (!cuenta[0].disponible) return res.send({ response: false, message: "La cuenta no se encuentra habilitada, contacta con soporte" });
+    if (cuenta[0].blocked) return res.send({ response: false, type: "CUENTA_BLOQUEADA", message: "La cuenta se encuentra bloqueada, contacta con soporte" });
+    if (!cuenta[0].disponible) return res.send({ response: false, type: "CUENTA_DESHABILITADA", message: "La cuenta no se encuentra habilitada, contacta con soporte" });
+    if (!cuenta[0].correo_confirmado) return res.send({ response: false, type: "CORREO_CONFIRMADO", usuario_id: cuenta[0].id, message: "El correo registrado no está confirmado" });
     bcrypt.compare(password, cuenta[0].password, async (err, valido) => {
       if (err) {
         res.send({
@@ -41,7 +47,7 @@ router.post("/login", async (req, res) => {
         );
         await Usuario.query()
           .patch({ token })
-          .where("user", user);
+          .where("usuario", user);
         res.send({
           response: true,
           data: {
@@ -68,14 +74,13 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  var { user, password } = req.body;
+  var { user, correo, password } = req.body;
 
   user = user.toLowerCase();
 
-  let regExp = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"); // email
-  let userIsValid = regExp.test(user);
-  if (!userIsValid) return res.send({ response: false, message: "No has ingresado un correo válido" });
-  const userAccount = await Usuario.query().where("user", user);
+  const userAccount = await Usuario.query().where("usuario", user);
+  const emailExists = await Datosusuario.query().where("correo", correo);
+  if (emailExists.length > 0) return res.send({ response: false, message: "Este correo ya se encuentra registrado" });
   if (userAccount.length > 0) {
     res.send({
       response: false,
@@ -84,17 +89,21 @@ router.post("/register", async (req, res) => {
   } else {
     Usuario.query()
       .insert({
-        user,
+        usuario: user,
         password: cryptPassword(password),
         tipo_usuario_id: 4
       })
       .then(() => {
-        res.send({
+        const createdUser = await Usuario.query().where("usuario", user)
+        await Datosusuario.query().insert({
+          usuario_id: createdUser[0].id
+        });
+        return res.send({
           response: true
         });
       })
       .catch(err => {
-        res.send({
+        return res.send({
           response: false,
           message: err
         });
@@ -124,6 +133,7 @@ router.get("/check/:token", async (req, res) => {
         .where("usuario.id", id_cuenta);
       if (user[0].blocked) return res.send({ response: false, message: "Este usuario se encuentra bloqueado" });
       if (!user[0].disponible) return res.send({ response: false, message: "Este usuario no se encuentra habilitado" });
+      if (!user[0].correo_confirmado) return res.send({ response: false, message: "El correo registrado no está confirmado" });
       if (user[0].token == token) {
         return res.send({
           response: true,
@@ -142,6 +152,50 @@ router.get("/check/:token", async (req, res) => {
       });
     }
   });
+});
+
+router.get("/correo/verificar/:id_usuario", async (req, res) => {
+  const id_usuario = req.params.id_usuario;
+  const datosUsuario = await Datosusuario.query().where("usuario_id", id_usuario);
+  if (datosUsuario.length > 0 && datosUsuario[0].correo_confirmado == 0) {
+    const codigo_verificacion = randomFixedInteger(6);
+    Validacion.query().insert({
+      tipo: "CORREO_CONFIRMACION",
+      codigo: codigo_verificacion,
+      usuario_id: id_usuario
+    });
+    const DOMAIN = 'sandbox3e5fbd10915844f4a0fa04119c231657.mailgun.org';
+    const api_key = "50d00ccc4d2cebb08ab8e86aa8d38759-713d4f73-faa0b5dd";
+    const mg = mailgun({ apiKey: api_key, domain: DOMAIN });
+    const data = {
+      from: 'PU-Kar <noreply@innovate.cl>',
+      to: datosUsuario.correo,
+      subject: 'Confirmar correo PU-Kar',
+      text: `Código de confirmación: ${codigo_verificacion}`
+    };
+    mg.messages().send(data, function (error, body) {
+      return res.send({
+        response: true
+      });
+    })
+  } else {
+    return res.send({
+      response: false,
+      message: "No hay un correo asociado o ya está confirmado"
+    });
+  }
+});
+
+router.post("/correo/verificar", async (req, res) => {
+  const { codigo, tipo } = req.body;
+
+});
+
+router.get("/logout/:token", async (req, res) => {
+  const { token } = req.params;
+  let user = await Usuario.query().patch({ token: null }).where("token", token);
+  if (user == 1) return res.send({ response: true });
+  else return res.send({ response: false });
 });
 
 router.get("/logout/:token", async (req, res) => {

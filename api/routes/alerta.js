@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const Usuario = require("../models/Usuario");
-const Datosusuario = require("../models/Datosusuario");
 const Alerta = require("../models/Alerta");
 
 router.get("/", require("../middlewares/checksession"), async (req, res) => {

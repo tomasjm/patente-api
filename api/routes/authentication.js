@@ -13,6 +13,8 @@ const Usuario = require("../models/Usuario");
 const Datosusuario = require("../models/Datosusuario");
 const Validacion = require("../models/Validacion");
 
+const mailgun = require("mailgun-js");
+
 const cryptPassword = password => bcrypt.hashSync(password, 12);
 
 const randomFixedInteger = length => Math.floor(Math.pow(10, length - 1) + Math.random() * (Math.pow(10, length) - Math.pow(10, length - 1) - 1));
@@ -20,13 +22,14 @@ const randomFixedInteger = length => Math.floor(Math.pow(10, length - 1) + Math.
 
 
 router.post("/login", async (req, res) => {
-  var { user, password } = req.body;
-  user = user.toLowerCase();
-  const cuenta = await Usuario.query().where("usuario", user); // SELECT * FROM usuarios WHERE usuario = tom
+  var { usuario, password } = req.body;
+  usuario = usuario.toLowerCase();
+  const cuenta = await Usuario.query().where("usuario", usuario); // SELECT * FROM usuarios WHERE usuario = tom
   if (cuenta.length > 0) {
-    if (cuenta[0].blocked) return res.send({ response: false, type: "CUENTA_BLOQUEADA", message: "La cuenta se encuentra bloqueada, contacta con soporte" });
+    if (cuenta[0].bloqueado) return res.send({ response: false, type: "CUENTA_BLOQUEADA", message: "La cuenta se encuentra bloqueada, contacta con soporte" });
     if (!cuenta[0].disponible) return res.send({ response: false, type: "CUENTA_DESHABILITADA", message: "La cuenta no se encuentra habilitada, contacta con soporte" });
-    if (!cuenta[0].correo_confirmado) return res.send({ response: false, type: "CORREO_CONFIRMADO", usuario_id: cuenta[0].id, message: "El correo registrado no está confirmado" });
+    const datosCuenta = await Datosusuario.query().where("usuario_id", cuenta[0].id);
+    if (!datosCuenta[0].correo_confirmado && cuenta[0].tipo_usuario_id == 4) return res.send({ response: false, type: "CORREO_CONFIRMADO", usuario_id: cuenta[0].id, message: "El correo registrado no está confirmado" });
     bcrypt.compare(password, cuenta[0].password, async (err, valido) => {
       if (err) {
         res.send({
@@ -47,8 +50,8 @@ router.post("/login", async (req, res) => {
         );
         await Usuario.query()
           .patch({ token })
-          .where("usuario", user);
-        res.send({
+          .where("usuario", usuario);
+        return res.send({
           response: true,
           data: {
             id: cuenta[0].id,
@@ -59,14 +62,14 @@ router.post("/login", async (req, res) => {
           }
         });
       } else {
-        res.send({
+        return res.send({
           response: false,
           message: "Datos incorrectos"
         });
       }
     });
   } else {
-    res.send({
+    return res.send({
       response: false,
       message: "Cuenta no existente"
     });
@@ -74,11 +77,11 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  var { user, correo, password } = req.body;
+  var { usuario, correo, password } = req.body;
 
-  user = user.toLowerCase();
+  usuario = usuario.toLowerCase();
 
-  const userAccount = await Usuario.query().where("usuario", user);
+  const userAccount = await Usuario.query().where("usuario", usuario);
   const emailExists = await Datosusuario.query().where("correo", correo);
   if (emailExists.length > 0) return res.send({ response: false, message: "Este correo ya se encuentra registrado" });
   if (userAccount.length > 0) {
@@ -89,14 +92,15 @@ router.post("/register", async (req, res) => {
   } else {
     Usuario.query()
       .insert({
-        usuario: user,
+        usuario,
         password: cryptPassword(password),
         tipo_usuario_id: 4
       })
-      .then(() => {
-        const createdUser = await Usuario.query().where("usuario", user)
+      .then(async () => {
+        const createdUser = await Usuario.query().where("usuario", usuario)
         await Datosusuario.query().insert({
-          usuario_id: createdUser[0].id
+          usuario_id: createdUser[0].id,
+          correo
         });
         return res.send({
           response: true
@@ -131,9 +135,9 @@ router.get("/check/:token", async (req, res) => {
           "institucion.id"
         )
         .where("usuario.id", id_cuenta);
-      if (user[0].blocked) return res.send({ response: false, message: "Este usuario se encuentra bloqueado" });
+      if (user[0].bloqueado) return res.send({ response: false, message: "Este usuario se encuentra bloqueado" });
       if (!user[0].disponible) return res.send({ response: false, message: "Este usuario no se encuentra habilitado" });
-      if (!user[0].correo_confirmado) return res.send({ response: false, message: "El correo registrado no está confirmado" });
+      if (!user[0].correo_confirmado && user[0].tipo_usuario_id == 4) return res.send({ response: false, message: "El correo registrado no está confirmado" });
       if (user[0].token == token) {
         return res.send({
           response: true,
@@ -158,8 +162,9 @@ router.get("/correo/verificar/:id_usuario", async (req, res) => {
   const id_usuario = req.params.id_usuario;
   const datosUsuario = await Datosusuario.query().where("usuario_id", id_usuario);
   if (datosUsuario.length > 0 && datosUsuario[0].correo_confirmado == 0) {
+    if (!(datosUsuario[0].correo != null && datosUsuario[0].correo != 0)) return res.send({ response: false, message: "correo no valido" });
     const codigo_verificacion = randomFixedInteger(6);
-    Validacion.query().insert({
+    await Validacion.query().insert({
       tipo: "CORREO_CONFIRMACION",
       codigo: codigo_verificacion,
       usuario_id: id_usuario
@@ -169,7 +174,7 @@ router.get("/correo/verificar/:id_usuario", async (req, res) => {
     const mg = mailgun({ apiKey: api_key, domain: DOMAIN });
     const data = {
       from: 'PU-Kar <noreply@innovate.cl>',
-      to: datosUsuario.correo,
+      to: datosUsuario[0].correo,
       subject: 'Confirmar correo PU-Kar',
       text: `Código de confirmación: ${codigo_verificacion}`
     };
@@ -186,8 +191,27 @@ router.get("/correo/verificar/:id_usuario", async (req, res) => {
   }
 });
 
-router.post("/correo/verificar", async (req, res) => {
+router.post("/validacion/confirmar", async (req, res) => {
   const { codigo, tipo } = req.body;
+  const registro = await Validacion.query().where({
+    tipo,
+    codigo
+  });
+  if(registro.length> 0 ) {
+    if (registro[0].confirmado) return res.send({ response: false, message:"ya está confirmado" });
+    switch(tipo) {
+      case("CORREO_CONFIRMACION"):
+        await Validacion.query().patch({ confirmado: 1 }).where("id", registro[0].id);
+        await Datosusuario.query().patch({ correo_confirmado: 1 }).where("usuario_id", registro[0].usuario_id);
+      default:
+        return res.send({response: true});
+    }
+  } else {
+    return res.send({
+      response: false,
+      message: "código malo"
+    });
+  }
 
 });
 
@@ -198,11 +222,11 @@ router.get("/logout/:token", async (req, res) => {
   else return res.send({ response: false });
 });
 
-router.get("/logout/:token", async (req, res) => {
-  const { token } = req.params;
-  let user = await Usuario.query().patch({ token: null }).where("token", token);
-  if (user == 1) return res.send({ response: true });
-  else return res.send({ response: false });
-});
+// router.get("/logout/:token", async (req, res) => {
+//   const { token } = req.params;
+//   let user = await Usuario.query().patch({ token: null }).where("token", token);
+//   if (user == 1) return res.send({ response: true });
+//   else return res.send({ response: false });
+// });
 
 module.exports = router;

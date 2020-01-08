@@ -42,7 +42,7 @@ router.get("/tipos", async (req, res) => {
  * GUARDIAS
  */
 router.get("/guardias", async (req, res) => {
-    let guardias = await Usuario.query().select("usuario.id", "usuario.usuario", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
+    let guardias = await Usuario.query().select("usuario.id", "usuario.usuario", "usuario.institucion_id", "usuario.bloqueado", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
         "institucion",
         "usuario.institucion_id",
         "=",
@@ -59,20 +59,20 @@ router.get("/guardias", async (req, res) => {
     });
 });
 router.post("/guardias/crear/:institucion_id", async (req, res) => {
-    let { user, password } = req.body;
+    let { usuario, password } = req.body;
     let { institucion_id } = req.params;
 
     if (institucion_id == 1) return res.send({ response: false, message: "Un guardia tiene que ser de una institución" });
 
-    let guardia = await Usuario.query().where("usuario", user);
+    let guardia = await Usuario.query().where("usuario", usuario);
     if (guardia.length != 0) return res.send({ response: false, message: "ya está registrado" });
     await Usuario.query().insert({
-        usuario: user,
+        usuario,
         password: cryptPassword(password),
         institucion_id,
         tipo_usuario_id: 3
     });
-    let created_user_id = await Usuario.query().where({ usuario: user });
+    let created_user_id = await Usuario.query().where({ usuario });
     await Datosusuario.query().insert({
         usuario_id: created_user_id[0].id
     });
@@ -81,14 +81,14 @@ router.post("/guardias/crear/:institucion_id", async (req, res) => {
     });
 });
 router.post("/guardias/editar/:guardia_id", async (req, res) => {
-    let { user, password, nombre, fono, correo, blocked, disponible, institucion_id, guardia_habilitado } = req.body;
+    let { usuario, password, nombre, fono, correo, bloqueado, disponible, institucion_id, guardia_habilitado } = req.body;
     let { guardia_id } = req.params;
 
     let guardia = await Usuario.query().where("id", guardia_id);
     if (guardia.length == 0) return res.send({ response: false, message: "no existe este usuario" });
     await Usuario.query().patch({
-        usuario: user,
-        blocked,
+        usuario,
+        bloqueado,
         disponible,
         institucion_id,
         guardia_habilitado
@@ -111,20 +111,20 @@ router.get("/usuarios/listar", async (req, res) => {
     });
 });
 router.post("/usuarios/crear/:tipo_usuario_id/:institucion_id", async (req, res) => {
-    let { user, password } = req.body;
+    let { usuario, password } = req.body;
     let { tipo_usuario_id, institucion_id } = req.params;
 
     if (institucion_id == 1) return res.send({ response: false, message: "Debe tener una institución" });
 
-    let selectedUser = await Usuario.query().where("usuario", user);
+    let selectedUser = await Usuario.query().where("usuario", usuario);
     if (selectedUser.length != 0) return res.send({ response: false, message: "ya está registrado" });
     await Usuario.query().insert({
-        usuario: user,
+        usuario,
         password: cryptPassword(password),
         institucion_id,
         tipo_usuario_id
     });
-    let created_user_id = await Usuario.query().where({ usuario: user });
+    let created_user_id = await Usuario.query().where({ usuario });
     await Datosusuario.query().insert({
         usuario_id: created_user_id[0].id
     });
@@ -133,14 +133,14 @@ router.post("/usuarios/crear/:tipo_usuario_id/:institucion_id", async (req, res)
     });
 });
 router.post("/usuarios/editar/:user_id", async (req, res) => {
-    let { user, password, nombre, fono, correo, blocked, disponible, institucion_id, guardia_habilitado } = req.body;
+    let { usuario, password, nombre, fono, correo, bloqueado, disponible, institucion_id, guardia_habilitado } = req.body;
     let { user_id } = req.params;
 
     let fUser = await Usuario.query().where("id", user_id);
     if (fUser.length == 0) return res.send({ response: false, message: "no existe este usuario" });
     await Usuario.query().patch({
-        usuario: user,
-        blocked,
+        usuario,
+        bloqueado,
         disponible,
         institucion_id,
         guardia_habilitado
@@ -153,7 +153,7 @@ router.post("/usuarios/editar/:user_id", async (req, res) => {
 });
 router.get("/usuarios/listar/tipo/:tipo_usuario_id", async (req, res) => {
     let { tipo_usuario_id } = req.params;
-    let usuarios = await Usuario.query().select("usuario.id", "usuario.usuario", "usuario.institucion_id", "usuario.blocked", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono")
+    let usuarios = await Usuario.query().select("usuario.id", "usuario.usuario", "usuario.institucion_id", "usuario.bloqueado", "usuario.disponible", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono")
         .leftJoin(
             "institucion",
             "usuario.institucion_id",
@@ -199,7 +199,7 @@ router.get("/usuarios/deshabilitar/:id_usuario", async (req, res) => {
 router.get("/usuarios/bloquear/:id_usuario", async (req, res) => {
     let { id_usuario } = req.params;
     await Usuario.query().patch({
-        blocked: true
+        bloqueado: true
     }).where("id", id_usuario);
     return res.send({
         response: true
@@ -208,7 +208,7 @@ router.get("/usuarios/bloquear/:id_usuario", async (req, res) => {
 router.get("/usuarios/desbloquear/:id_usuario", async (req, res) => {
     let { id_usuario } = req.params;
     await Usuario.query().patch({
-        blocked: false
+        bloqueado: false
     }).where("id", id_usuario);
     return res.send({
         response: true

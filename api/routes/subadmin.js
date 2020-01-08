@@ -27,7 +27,7 @@ router.get("/estadisticas", async (req, res) => {
  */
 router.get("/guardias", async (req, res) => {
     let institucion_id = req.institucion_id;
-    let guardias = await Usuario.query().select("usuario.id", "usuario.user", "usuario.institucion_id", "usuario.guardia_habilitado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
+    let guardias = await Usuario.query().select("usuario.id", "usuario.usuario", "usuario.institucion_id", "usuario.guardia_habilitado", "usuario.bloqueado", "institucion.institucion", "datos_usuario.nombre", "datos_usuario.correo", "datos_usuario.fono").leftJoin(
         "institucion",
         "usuario.institucion_id",
         "=",
@@ -47,20 +47,20 @@ router.get("/guardias", async (req, res) => {
     });
 });
 router.post("/guardias/crear", async (req, res) => {
-    let { user, password } = req.body;
+    let { usuario, password } = req.body;
     let institucion_id = req.institucion_id;
 
     if (institucion_id == 1) return res.send({ response: false, message: "Un guardia tiene que ser de una institución" });
 
-    let guardia = await Usuario.query().where("usuario", user);
+    let guardia = await Usuario.query().where("usuario", usuario);
     if (guardia.length != 0) return res.send({ response: false, message: "ya está registrado" });
     await Usuario.query().insert({
-        usuario: user,
+        usuario,
         password: cryptPassword(password),
         institucion_id,
         tipo_usuario_id: 3
     });
-    let created_user_id = await Usuario.query().where({ usuario: user });
+    let created_user_id = await Usuario.query().where({ usuario });
     await Datosusuario.query().insert({
         usuario_id: created_user_id[0].id
     });
@@ -69,14 +69,14 @@ router.post("/guardias/crear", async (req, res) => {
     });
 });
 router.post("/guardias/editar/:guardia_id", async (req, res) => {
-    let { user, password, nombre, fono, correo, guardia_habilitado } = req.body;
+    let { usuario, password, nombre, fono, correo, guardia_habilitado } = req.body;
     let { guardia_id } = req.params;
     let institucion_id = req.institucion_id;
 
     let guardia = await Usuario.query().where("id", guardia_id);
     if (guardia.length == 0) return res.send({ response: false, message: "no existe este usuario" });
     await Usuario.query().patch({
-        usuario: user,
+        usuario,
         guardia_habilitado,
     }).where({
         id: guardia_id,

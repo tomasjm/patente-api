@@ -40,6 +40,12 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
     const { notification_type } = req.params;
     const { patente } = req.body;
     const userid = req.userid;
+    let guardia = await Usuario.query().select("institucion.institucion").leftJoin(
+        "institucion",
+        "usuario.institucion_id",
+        "=",
+        "institucion.id"
+    ).where('id', userid);
     if (patente == null) return res.send({ response: false });
     const patenteInfo = await Patente.query().where("patente", patente);
     if (patenteInfo.length == 0) return res.send({ response: false, error: "Patente no registrada" });
@@ -70,7 +76,8 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
                     patente: patente,
                     fecha: fecha.toString(),
                     tipo: item.tipo,
-                    click_action: "FLUTTER_NOTIFICATION_CLICK"
+                    click_action: "FLUTTER_NOTIFICATION_CLICK",
+                    institucion: guardia[0].institucion
                 },
                 token: notification_key
             };

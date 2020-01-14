@@ -6,7 +6,7 @@ const Datosusuario = require("../models/Datosusuario");
 
 router.post("/", async (req, res) => {
   const userid = req.userid;
-  const { nombre, anexo, fono, correo } = req.body;
+  const { nombre, anexo, fono } = req.body;
   const usuario = await Usuario.query().where("id", userid);
   if (usuario.length == 0) {
     return res.send({
@@ -20,7 +20,6 @@ router.post("/", async (req, res) => {
       nombre,
       anexo,
       fono,
-      correo,
       usuario_id: userid
     });
     res.send({
@@ -32,8 +31,7 @@ router.post("/", async (req, res) => {
       .patch({
         nombre,
         anexo,
-        fono,
-        correo
+        fono
       })
       .where("usuario_id", userid);
     res.send({

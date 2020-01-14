@@ -45,7 +45,7 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
         "usuario.institucion_id",
         "=",
         "institucion.id"
-    ).where('id', userid);
+    ).where('usuario.id', userid);
     if (patente == null) return res.send({ response: false });
     const patenteInfo = await Patente.query().where("patente", patente);
     if (patenteInfo.length == 0) return res.send({ response: false, error: "Patente no registrada" });

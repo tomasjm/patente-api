@@ -179,6 +179,11 @@ router.get("/correo/verificar/:id_usuario", async (req, res) => {
       text: `Código de confirmación: ${codigo_verificacion}`
     };
     mg.messages().send(data, function (error, body) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(body);
+      }
       return res.send({
         response: true
       });

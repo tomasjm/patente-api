@@ -59,7 +59,7 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
             const notification_uuid = uuidv4();
             const fecha = moment().unix();
             await Alerta.query().insert({
-                tipo: item.titulo,
+                tipo: item.tipo,
                 uuid: notification_uuid,
                 desde_usuario_id: userid,
                 hacia_usuario_id: user[0].id,
@@ -75,7 +75,7 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
                     uuid: notification_uuid,
                     patente: patente,
                     fecha: fecha.toString(),
-                    tipo: item.tipo,
+                    tipo: item.titulo,
                     click_action: "FLUTTER_NOTIFICATION_CLICK",
                     institucion: guardia[0].institucion
                 },

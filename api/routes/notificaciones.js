@@ -59,7 +59,7 @@ router.post("/send/:notification_type", require("../middlewares/checksession"), 
             const notification_uuid = uuidv4();
             const fecha = moment().unix();
             await Alerta.query().insert({
-                tipo: item.tipo,
+                tipo: item.titulo,
                 uuid: notification_uuid,
                 desde_usuario_id: userid,
                 hacia_usuario_id: user[0].id,

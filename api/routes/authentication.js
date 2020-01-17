@@ -169,13 +169,13 @@ router.get("/correo/verificar/:id_usuario", async (req, res) => {
       codigo: codigo_verificacion,
       usuario_id: id_usuario
     });
-    const DOMAIN = 'sandbox3e5fbd10915844f4a0fa04119c231657.mailgun.org';
+    const DOMAIN = 'mailgun.pukar.cl';
     const api_key = "50d00ccc4d2cebb08ab8e86aa8d38759-713d4f73-faa0b5dd";
     const mg = mailgun({ apiKey: api_key, domain: DOMAIN });
     const data = {
-      from: 'PU-Kar <noreply@innovate.cl>',
+      from: 'Pukar <noreply@innovate.cl>',
       to: datosUsuario[0].correo,
-      subject: 'Confirmar correo PU-Kar',
+      subject: 'Código de verificación correo Pukar',
       text: `Código de confirmación: ${codigo_verificacion}`
     };
     mg.messages().send(data, function (error, body) {

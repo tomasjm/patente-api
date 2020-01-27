@@ -1,6 +1,6 @@
 exports.seed = async function (knex, Promise) {
   // Deletes ALL existing entries
-
+  await knex("alerta").del();
   await knex("patente").del();
   await knex("validacion").del();
   await knex("datos_usuario").del();

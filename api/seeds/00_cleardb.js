@@ -4,6 +4,7 @@ exports.seed = async function (knex, Promise) {
   await knex("patente").del();
   await knex("validacion").del();
   await knex("datos_usuario").del();
+  await knex("usuario").del();
   await knex("institucion").del();
   await knex("tipo_usuario").del();
   return console.log("base de datos limpiada");
